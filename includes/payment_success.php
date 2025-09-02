@@ -132,7 +132,7 @@ try {
                     
                     <p>Thank you for shopping with BotaniQ! You will receive an email confirmation shortly.</p>
                     
-                    <a href="../e-commerce.php" class="btn">Continue Shopping</a>
+                    <a href="/e-commerce.php" class="btn">Continue Shopping</a>
                 </div>
             </body>
             </html>
@@ -202,7 +202,7 @@ try {
             <h1>Payment Error</h1>
             <p><?php echo htmlspecialchars($e->getMessage()); ?></p>
             <p>If you continue to experience issues, please contact our support team.</p>
-            <a href="../e-commerce.php" class="btn">Return to Shop</a>
+            <a href="/e-commerce.php" class="btn">Return to Shop</a>
         </div>
     </body>
     </html>
