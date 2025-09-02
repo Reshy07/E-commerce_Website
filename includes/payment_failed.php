@@ -202,7 +202,7 @@ try {
             <h1>Payment Error</h1>
             <p><?php echo htmlspecialchars($e->getMessage()); ?></p>
             <p>If you continue to experience issues, please contact our support team.</p>
-            <a href="../e-commerce.php" class="btn">Return to Shop</a>
+            <a href="http://localhost/E-commerce/includes/e-commerce.php" class="btn">Return to Shop</a>
         </div>
     </body>
     </html>
