@@ -1,0 +1,20 @@
+euta shopping cart ma
+- cart bata add ra remove
+- quantities milauna
+- total price
+- notification toast items add hudai garda
+- cart ma badge huna paryo
+
+funtionsss haru
+- createCartElements- yo chai cart ko informationnnssss haru hold garnaaa euta container jasto
+                    - sidebar ahru ko lagi yesmai html lekhexu
+                    -alsoo counter badge pani chaa
+- openCart 
+-closeCart
+- arko banya aba addtoCart fucntion 
+    -suruma items add garna item hamro cart ma cha ki chaina banera check garnu parxa
+    -item cha baney quantity badauney(fucntion -updateQuantity)
+    - chaina baney tesko ifno haru push garney
+    -arko kun time add garyooo banera baney ueta toast dkehauneyy
+-removeFromCart 
+-updateCart
