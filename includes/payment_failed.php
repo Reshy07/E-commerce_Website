@@ -1,7 +1,7 @@
 <?php
 // payment_failed.php
 session_start();
-require_once __DIR__ . "/db_connect.php";
+require_once 'db_connect.php';
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -133,8 +133,8 @@ try {
                 
                 <p>Please try again or contact our support team if the problem persists.</p>
                 
-                <a href="../checkout.php" class="btn">Try Again</a>
-                <a href="../e-commerce.php" class="btn btn-secondary">Continue Shopping</a>
+                <a href="checkout.php" class="btn">Try Again</a>
+                <a href="e-commerce.php" class="btn btn-secondary">Continue Shopping</a>
             </div>
         </body>
         </html>
@@ -202,7 +202,7 @@ try {
             <h1>Payment Error</h1>
             <p><?php echo htmlspecialchars($e->getMessage()); ?></p>
             <p>If you continue to experience issues, please contact our support team.</p>
-            <a href="http://localhost/E-commerce/includes/e-commerce.php" class="btn">Return to Shop</a>
+            <a href="/e-commerce.php" class="btn">Return to Shop</a>
         </div>
     </body>
     </html>

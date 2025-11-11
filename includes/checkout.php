@@ -3,7 +3,7 @@
 session_start();
 
 // include DB connection (make sure db.php exists in includes folder and defines $conn)
-require_once __DIR__ . "/db_connect.php";
+require_once 'db_connect.php';
 
 // ==================== USER INFO ====================
 $user_name = "";
@@ -24,7 +24,7 @@ if (isset($_SESSION['user_id'])) {
 // ==================== CART CALCULATION ====================
 // For demo, using static cart. Replace with $_SESSION['cart'] if you already have one.
 $cart_items = [
-    ['name' => 'Aloe Vera', 'price' => 1500, 'quantity' => 1],
+    ['name' => 'Aloe Vera', 'price' => 4300, 'quantity' => 1],
 ];
 $shipping = 100;
 
@@ -614,39 +614,40 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
             }
             
             // Process eSewa payment
-            function processEsewaPayment(orderData) {
-                const placeOrderBtn = document.getElementById('place-order-btn');
-                placeOrderBtn.disabled = true;
-                placeOrderBtn.textContent = 'Processing...';
-                
-                // First save the order to database
-                fetch('process_order.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderData),
-                    credentials: 'include'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Clear the cart before redirecting to eSewa
-                        sessionStorage.removeItem('cartItems');
-                        
-                        // Submit the eSewa form
-                        document.getElementById('esewa-form').submit();
-                    } else {
-                        throw new Error(data.message || 'Failed to create order');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while processing your order. Please try again.');
-                    
-                    // Reset button state
-                    placeOrderBtn.disabled = false;
-                    placeOrderBtn.textContent = 'Place Order';
-                });
-            }
+         function processEsewaPayment(orderData) {
+    const placeOrderBtn = document.getElementById('place-order-btn');
+    placeOrderBtn.disabled = true;
+    placeOrderBtn.textContent = 'Processing...';
+
+    // ADD THE TRANSACTION UUID FROM PHP
+    orderData.transaction_uuid = "<?php echo $transaction_uuid; ?>";
+
+    fetch('process_order.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Clear cart
+            sessionStorage.removeItem('cartItems');
+            cartItems = [];
+
+            // Submit eSewa form
+            document.getElementById('esewa-form').submit();
+        } else {
+            throw new Error(data.error || 'Failed to create order');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while processing your order. Please try again.');
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.textContent = 'Place Order';
+    });
+}
             
             // Style payment method selection
             const paymentMethods = document.querySelectorAll('.payment-method');

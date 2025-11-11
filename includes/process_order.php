@@ -3,18 +3,19 @@
 session_start();
 header('Content-Type: application/json');
 
-require_once __DIR__ . "/db_connect.php"; // must define $conn = new mysqli(...)
+require_once "db_connect.php";   // $conn = new mysqli(...)
 
-// Enable error reporting for debugging (comment out in production)
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 try {
+    /* --------------------------------------------------------------
+       1. BASIC AUTH + INPUT
+    -------------------------------------------------------------- */
     if (!isset($_SESSION['user_id'])) {
         throw new Exception("User not logged in");
     }
     $user_id = (int)$_SESSION['user_id'];
 
-    // Read request
     $raw = file_get_contents("php://input");
     if (!$raw) {
         throw new Exception("Empty request body");
@@ -22,7 +23,7 @@ try {
     $payload = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
 
     $customer = $payload['customerInfo'] ?? [];
-    $items    = $payload['items'] ?? [];
+    $items    = $payload['items']       ?? [];
     $shipping = (float)($payload['shipping'] ?? 0);
     $tax      = (float)($payload['tax'] ?? 0);
 
@@ -30,7 +31,9 @@ try {
         throw new Exception("No items in order");
     }
 
-    // Recalculate totals
+    /* --------------------------------------------------------------
+       2. RECALCULATE TOTALS (prevent price tampering)
+    -------------------------------------------------------------- */
     $calcSubtotal = 0.0;
     foreach ($items as $row) {
         $qty   = (int)($row['quantity'] ?? 0);
@@ -42,25 +45,35 @@ try {
     }
     $totalAmount = $calcSubtotal + $shipping + $tax;
 
-    // Generate unique transaction id
-    $transaction_uuid = uniqid("order_");
-    $payment_method   = $customer['paymentMethod'] ?? 'cod';
-    $payment_status   = "pending";
-    $order_status     = "pending";
+    /* --------------------------------------------------------------
+       3. TRANSACTION UUID
+          • Use the one the front-end already generated (checkout.php)
+          • Fall back to uniqid() if it is missing (defensive)
+    -------------------------------------------------------------- */
+    $transaction_uuid = $payload['transaction_uuid'] ?? uniqid("order_");
 
-    // Shipping info
+    $payment_method = $customer['paymentMethod'] ?? 'cod';
+    $payment_status = ($payment_method === 'esewa') ? 'pending' : 'completed';
+    $order_status   = 'pending';
+
+    /* --------------------------------------------------------------
+       4. SHIPPING INFO
+    -------------------------------------------------------------- */
     $shipping_address = trim((string)($customer['address'] ?? ''));
     $shipping_city    = trim((string)($customer['city'] ?? ''));
     $shipping_zip     = trim((string)($customer['zipCode'] ?? ''));
     $shipping_country = trim((string)($customer['country'] ?? ''));
     $customer_notes   = trim((string)($customer['notes'] ?? ''));
 
-    // Start DB transaction
+    /* --------------------------------------------------------------
+       5. DB TRANSACTION
+    -------------------------------------------------------------- */
     $conn->begin_transaction();
 
-    // 1. Insert payment
+    /* ---- 5.1 Insert payment (with transaction_uuid) ---- */
     $stmt = $conn->prepare("
-        INSERT INTO payments (user_id, transaction_id, amount, payment_method, status)
+        INSERT INTO payments
+            (user_id, transaction_id, amount, payment_method, status)
         VALUES (?, ?, ?, ?, ?)
     ");
     $stmt->bind_param("isdss", $user_id, $transaction_uuid, $totalAmount, $payment_method, $payment_status);
@@ -68,10 +81,11 @@ try {
     $payment_id = $stmt->insert_id;
     $stmt->close();
 
-    // 2. Insert order
+    /* ---- 5.2 Insert order ---- */
     $stmt = $conn->prepare("
-        INSERT INTO orders (user_id, payment_id, total_amount, status, payment_method,
-                            shipping_address, shipping_city, shipping_zip, shipping_country, customer_notes)
+        INSERT INTO orders
+            (user_id, payment_id, total_amount, status, payment_method,
+             shipping_address, shipping_city, shipping_zip, shipping_country, customer_notes)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
     $stmt->bind_param(
@@ -83,7 +97,7 @@ try {
     $order_id = $stmt->insert_id;
     $stmt->close();
 
-    // 3. Insert order items
+    /* ---- 5.3 Insert order items ---- */
     $stmt = $conn->prepare("
         INSERT INTO order_items (order_id, product_name, quantity, price)
         VALUES (?, ?, ?, ?)
@@ -97,15 +111,17 @@ try {
     }
     $stmt->close();
 
-    // Commit
     $conn->commit();
 
+    /* --------------------------------------------------------------
+       6. SUCCESS RESPONSE
+    -------------------------------------------------------------- */
     echo json_encode([
-        "success"   => true,
-        "orderId"   => $order_id,
-        "paymentId" => $payment_id,
-        "transactionId" => $transaction_uuid,
-        "message"   => "Order created successfully"
+        "success"        => true,
+        "orderId"        => $order_id,
+        "paymentId"      => $payment_id,
+        "transactionId"  => $transaction_uuid,
+        "message"        => "Order created successfully"
     ]);
 
 } catch (Throwable $e) {
