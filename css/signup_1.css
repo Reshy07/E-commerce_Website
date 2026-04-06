@@ -65,7 +65,7 @@ body {
 }
 
 .slogan {
-  text-align: center;
+  display: none;
 }
 
 .slogan p {
