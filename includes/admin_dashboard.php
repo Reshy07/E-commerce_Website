@@ -4,7 +4,7 @@ require_once 'db_connect.php'; // Make sure this path is correct
 
 // Check if admin is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: ../html/login.html");
+    header("Location: ../pages/auth/login.html");
     exit();
 }
 

@@ -448,7 +448,7 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
                     </div>
                     
                     <button id="place-order-btn" class="btn btn-block">Place Order</button>
-                    <a href="e-commerce.php" class="continue-shopping">Continue Shopping</a>
+                    <a href="../e-commerce.php" class="continue-shopping">Continue Shopping</a>
                 </div>
             </div>
         </div>

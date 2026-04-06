@@ -13,7 +13,7 @@ $password = $_POST['password'];
 $userType = $_POST['userType'];
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header("Location: ../html/login.html?error=invalid_email");
+    header("Location: ../pages/auth/login.html?error=invalid_email");
     exit();
 }
 
@@ -44,7 +44,7 @@ if ($userType === 'admin') {
             exit();
         } else {
             $_SESSION['login_error'] = "Invalid email or password";
-            header("Location: ../html/login.html");
+            header("Location: ../pages/auth/login.html");
             exit();
         }
     }
@@ -78,18 +78,18 @@ if ($userType === 'admin') {
             if (isset($_GET['redirect']) && $_GET['redirect'] === 'checkout') {
                 header("Location: checkout.php");
             } else {
-                header("Location: e-commerce.php");
+                header("Location: ../e-commerce.php");
             }
             exit();
         } else {
             $_SESSION['login_error'] = "Invalid email or password";
-            header("Location: ../html/login.html");
+            header("Location: ../pages/auth/login.html");
             exit();
         }
     }
 }
 
-header("Location: ../html/login.html?error=invalid_credentials");
+header("Location: ../pages/auth/login.html?error=invalid_credentials");
 exit();
 
 $stmt->close();

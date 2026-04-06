@@ -4,6 +4,6 @@ $_SESSION = array();
 
 session_destroy();
 
-header("Location:../includes/e-commerce.php");
+header("Location:../e-commerce.php");
 exit();
 ?>

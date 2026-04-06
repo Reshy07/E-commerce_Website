@@ -109,7 +109,7 @@ try {
             <p><strong>Status:</strong> <?php echo htmlspecialchars($status); ?></p>
 
             <p>Please don’t refresh the page or navigate away while we redirect you.</p>
-            <p><a href="e-commerce.php">Click here if not redirected automatically</a></p>
+            <p><a href="../e-commerce.php">Click here if not redirected automatically</a></p>
         </div>
 
     </body>
@@ -149,7 +149,7 @@ try {
             <h1>Payment Error</h1>
             <p><?php echo htmlspecialchars($e->getMessage()); ?></p>
             <p>If the problem persists, please contact support.</p>
-            <a href="e-commerce.php" class="btn">Return to Shop</a>
+            <a href="../e-commerce.php" class="btn">Return to Shop</a>
         </div>
     </body>
     </html>

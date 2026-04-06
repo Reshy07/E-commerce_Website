@@ -33,8 +33,8 @@ if ($result->num_rows > 0) {
                     <span>Hi, <?php echo htmlspecialchars($user_name); ?></span>
                 </div>
             <?php else: ?>
-                <a href="./login.html" class="login-signup">
-                    <img src="../icon/user.png"> Login / Sign Up
+                <a href="../pages/auth/login.html" class="login-signup">
+                    <img src="../icon/user.png" alt="User"> Login / Sign Up
                 </a>
             <?php endif; ?>
         </div>
@@ -69,7 +69,7 @@ if ($result->num_rows > 0) {
             
             <nav class="main-nav">
                 <ul class="nav-links left-menu">
-                    <li class="list"><a href="./e-commerce.php">HOME</a></li>
+                    <li class="list"><a href="../e-commerce.php">HOME</a></li>
                     <li class="list"> <a href="#">SERVICES</a></li>
                     <li class="list"><a href="#">PRODUCTS</a></li>
                 </ul>

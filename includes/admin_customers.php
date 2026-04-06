@@ -3,7 +3,7 @@ session_start();
 require_once 'db_connect.php';
 
 if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: ../html/login.html");
+    header("Location: ../pages/auth/login.html");
     exit();
 }
 

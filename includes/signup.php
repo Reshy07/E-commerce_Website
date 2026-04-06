@@ -27,7 +27,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
 
-    header("Location: signup.html?error=email_exists");
+    header("Location: ../pages/auth/signup.html?error=email_exists");
     exit();
 } else {
 
@@ -37,10 +37,10 @@ if ($result->num_rows > 0) {
     $stmt->bind_param("ssssss", $full_name, $phone_number, $email, $gender, $dob, $password);
     
     if ($stmt->execute()) {
-        header("Location: ../html/login.html?signup=success");
+        header("Location: ../pages/auth/login.html?signup=success");
         exit();
     } else {
-        header("Location: ../html/signup.html?error=registration_failed");
+        header("Location: ../pages/auth/signup.html?error=registration_failed");
         exit();
     }
 }

@@ -24,8 +24,8 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
                     <a href="logout.php" class="logout-btn">Logout</a>
                 </div>
             <?php else: ?>
-                <a href="../html/login.html" class="login-signup">
-                    <img src="../icon/user.png"> Login / Sign Up
+                <a href="../pages/auth/login.html" class="login-signup">
+                    <img src="../icon/user.png" alt="User"> Login / Sign Up
                 </a>
             <?php endif; ?>
             <style>
@@ -45,7 +45,7 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
         <div class="contact-bar">
             <div class="contact-item">
                 <div class="contact-icon">
-                    <img src="../icon/call.png">
+                    <img src="../icon/call.png" alt="Call">
                 </div>
                 <div class="contact-info">
                     <span class="contact-label">CALL US</span>
@@ -55,7 +55,7 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
             
             <div class="contact-item">
                 <div class="contact-icon">
-                    <img src="../icon/location.png">
+                    <img src="../icon/location.png" alt="Location">
                 </div>
                 <div class="contact-info">
                     <span class="contact-label">LOCATION</span>
@@ -131,58 +131,57 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
                 <div class="category-column">
                     <div class="types">
                         <h3 class="row-title">Indoor Plants</h3>
-                        <a href="./indoor.php" class="Shop">Shop now <img src="../icon/right-arrow.png"class="arrow" ></a>
+                        <a href="./indoor.php" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
                         
                     </div>
-                    <img src="../icon/indoor.png" >
+                    <img src="../icon/indoor.png" alt="Indoor plants">
                 </div>
                 <div class="category-column">
                     <div class="types">
                         <h3 class="row-title">Outdoor Plants</h3>
-                        <a href="./outdoor.html" class="Shop">Shop now <img src="../icon/right-arrow.png"class="arrow"></a>
+                        <a href="../pages/categories/outdoor.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
                         
                     </div>
-                    <img src="../icon/outdoor.png" >
+                    <img src="../icon/outdoor.png" alt="Outdoor plants">
                 </div>
                 <div class="category-column">
                     <div class="types">
                         <h3 class="row-title">Hanging Plants</h3>
-                        <a href="./hanging.html" class="Shop">Shop now <img src="../icon/right-arrow.png"class="arrow"></a>
+                        <a href="../pages/categories/hanging.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
                         
                     </div>
-                    <img src="../icon/hang.png">
+                    <img src="../icon/hang.png" alt="Hanging plants">
                 </div>
             <div class="category-column">
                 <div class="types">
                     <h3 class="row-title">Fruit-Bearing Plants</h3>
-                    <a href="./Fruits.html" class="Shop">Shop now <img src="../icon/right-arrow.png"class="arrow"></a>
+                    <a href="../pages/categories/Fruits.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
               
                 </div>
-                <img src="../icon/fruits.png">
+                <img src="../icon/fruits.png" alt="Fruit-bearing plants">
             </div>
             
             <div class="category-column">
                 <div class="types">
                     <h3 class="row-title">Most Bought Plants</h3>
-                    <a href="./popular.htm" class="Shop">Shop now <img src="../icon/right-arrow.png"class="arrow"></a>            
+                    <a href="../pages/categories/popular.htm" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>            
                 </div>
-                <img src="../icon/favored.png">
+                <img src="../icon/favored.png" alt="Popular plants">
             </div>
 
             <div class="category-column">
                 <div class="types">
                     <h3 class="row-title">New Arrivals</h3>
-                    <a href="./new.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow"></a>
+                    <a href="../pages/categories/new.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
                     
                 </div>
-                <img src="../icon/new-product.png">
+                <img src="../icon/new-product.png" alt="New arrivals">
             </div>
         </div>
         </section>
         
     </main>
-    <script src="../javascript/index.js"></script>
-    <section class="contact">
+    <section class="contact" id="updates">
         <div class="contact_contain"  >
             <h2>Stay Updated with BotaniQ</h2>
             <p >Subscribe to our newsletter for plant care tips, new arrivals, and exclusive offers.</p>
@@ -192,9 +191,7 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
             </form>
         </div>
     </section>
-</main>
-
-<footer class="footer">
+<footer class="footer" id="about">
     <div class="fcontain" >
         <div>
             <h3 >About BotaniQ</h3>
@@ -204,11 +201,11 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
         <div class="flist">
             <h3 >Quick Links</h3>
             <ul >
-                <li><a href="#" >Home</a></li>
-                <li><a href="#" >Shop</a></li>
-                <li><a href="#" >Plant Care</a></li>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#" >Contact</a></li>
+                <li><a href="../e-commerce.php" >Home</a></li>
+                <li><a href="../pages/categories/indoor.html" >Shop</a></li>
+                <li><a href="../pages/categories/indoor.html" >Plant Care</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#updates" >Contact</a></li>
             </ul>
         </div>
         
