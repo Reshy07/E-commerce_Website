@@ -36,7 +36,7 @@ body {
 .main-container {
   display: grid;
   grid-template-columns: minmax(280px, 1fr) minmax(340px, 500px);
-  align-items: start;
+  align-items: center;
   gap: 2rem;
   width: min(1180px, 100%);
 }
@@ -45,22 +45,25 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  padding: 1rem 2rem 2rem;
+  padding: 0 2rem;
 }
 
 .logo {
-  width: min(100%, 420px);
+  width: min(100%, 540px);
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: visible;
 }
 
 .logo img {
   width: 100%;
-  max-width: 420px;
+  max-width: 540px;
   height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .container {
@@ -184,11 +187,13 @@ h2 {
 
   .main-container {
     grid-template-columns: 1fr;
+    align-items: center;
     gap: 1rem;
   }
 
   .logo-container {
     padding: 1rem 0 0;
+    padding: 0;
   }
 
   .signup-box {
