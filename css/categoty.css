@@ -135,8 +135,8 @@ img {
 }
 
 .logo {
-  width: 132px;
-  height: 132px;
+  width: 168px;
+  height: 168px;
   border-radius: 50%;
   background: rgba(238, 240, 229, 0.95);
   display: flex;
@@ -148,9 +148,12 @@ img {
 }
 
 #LOGO {
-  width: 88%;
-  height: auto;
+  width: 980px;
+  height: 980px;
+  object-fit: cover;
+  object-position: center;
 }
+
 
 .nav-links {
   display: flex;
