@@ -12,6 +12,8 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 $total_customers = $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'];
 $total_products = $conn->query("SELECT COUNT(*) as count FROM products")->fetch_assoc()['count'];
 $total_orders = $conn->query("SELECT COUNT(*) as count FROM orders")->fetch_assoc()['count'];
+$total_sales_result = $conn->query("SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE status = 'completed'");
+$total_sales = $total_sales_result ? (float)$total_sales_result->fetch_assoc()['total'] : 0;
 
 $admin_name = $_SESSION['admin_name'];
 ?>
@@ -84,12 +86,16 @@ $admin_name = $_SESSION['admin_name'];
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
+            margin-bottom: 24px;
         }
         .dashboard-card {
             background-color: white;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .sidebar-menu a.active {
+            background-color: #20674b;
         }
         .card-header {
             display: flex;
@@ -121,7 +127,7 @@ $admin_name = $_SESSION['admin_name'];
                 Hi, <?php echo htmlspecialchars($admin_name); ?>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="#dashboard">
+                <li><a href="#dashboard" class="active">
                     <span><img src="../icon/dashboard.png"></span> 
                     Dashboard
                 </a></li>
@@ -129,7 +135,7 @@ $admin_name = $_SESSION['admin_name'];
                     <span><img src="../icon/product.png"></span> 
                     Products
                 </a></li>
-                <li><a href="#orders">
+                <li><a href="admin_orders.php">
                     <span><img src="../icon/order.png"></span> 
                     Orders
                 </a></li>
@@ -137,8 +143,8 @@ $admin_name = $_SESSION['admin_name'];
                     <span><img src="../icon/customer.png"></span> 
                     Customers
                 </a></li>
-                <li><a href="#settings">
-                    <span><img src="../icon/settingssssss.png"></span> 
+                <li><a href="admin_settings.php">
+                    <span><img src="../icon/settings.png"></span> 
                     Settings
                 </a></li>
                 <li>
@@ -156,59 +162,33 @@ $admin_name = $_SESSION['admin_name'];
                         <h3>Total Sales</h3>
                         <span><img src="../icon/sales.png"></span>
                     </div>
-                    <p style="font-size: 24px; font-weight: bold; color: #20674b;">NPR 75,000</p>
-                    <p style="color: #666;">+12% from last month</p>
+                    <p style="font-size: 24px; font-weight: bold; color: #20674b;">NPR <?php echo number_format($total_sales, 2); ?></p>
+                    <p style="color: #666;">Completed orders revenue</p>
                 </div>
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h3>Total Orders</h3>
                         <span><img src="../icon/order.png"></span>
                     </div>
-                    <p style="font-size: 24px; font-weight: bold; color: #20674b;">245</p>
-                    <p style="color: #666;">+5 from last week</p>
+                    <p style="font-size: 24px; font-weight: bold; color: #20674b;"><?php echo (int)$total_orders; ?></p>
+                    <p style="color: #666;">Total orders in system</p>
                 </div>
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h3>New Customers</h3>
                         <span><img src="../icon/new-costumer.png"></span>
                     </div>
-                    <p style="font-size: 24px; font-weight: bold; color: #20674b;">37</p>
-                    <p style="color: #666;">+8 from last week</p>
+                    <p style="font-size: 24px; font-weight: bold; color: #20674b;"><?php echo (int)$total_customers; ?></p>
+                    <p style="color: #666;">Registered users</p>
                 </div>
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h3>Inventory</h3>
                         <span><img src="../icon/inventory.png"></span>
                     </div>
-                    <p style="font-size: 24px; font-weight: bold; color: #20674b;">128</p>
+                    <p style="font-size: 24px; font-weight: bold; color: #20674b;"><?php echo (int)$total_products; ?></p>
                     <p style="color: #666;">Products in stock</p>
                 </div>
-                <div class="dashboard-card">
-        <div class="card-header">
-            <h3>Total Customers</h3>
-            <span><img src="../icon/customer.png"></span>
-        </div>
-        <p style="font-size: 24px; font-weight: bold; color: #20674b;"><?php echo $total_customers; ?></p>
-        <p style="color: #666;">Registered users</p>
-    </div>
-    
-    <div class="dashboard-card">
-        <div class="card-header">
-            <h3>Total Products</h3>
-            <span><img src="../icon/product.png"></span>
-        </div>
-        <p style="font-size: 24px; font-weight: bold; color: #20674b;"><?php echo $total_products; ?></p>
-        <p style="color: #666;">Available products</p>
-    </div>
-    
-    <div class="dashboard-card">
-        <div class="card-header">
-            <h3>Total Orders</h3>
-            <span><img src="../icon/order.png"></span>
-        </div>
-        <p style="font-size: 24px; font-weight: bold; color: #20674b;"><?php echo $total_orders; ?></p>
-        <p style="color: #666;">Completed orders</p>
-    </div>
             </div>
         </main>
     </div>

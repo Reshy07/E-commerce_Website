@@ -21,27 +21,10 @@ if (isset($_SESSION['user_id'])) {
     $stmt->close();
 }
 
-// ==================== CART CALCULATION ====================
-// For demo, using static cart. Replace with $_SESSION['cart'] if you already have one.
-$cart_items = [
-    ['name' => 'Aloe Vera', 'price' => 4300, 'quantity' => 1],
-];
+// eSewa values are prepared after order creation using server-side signed data.
+// Keep only static values needed by the hidden form template.
 $shipping = 100;
-
-$subtotal = 0;
-foreach ($cart_items as $item) {
-    $subtotal += $item['price'] * $item['quantity'];
-}
-$totalAmount = $subtotal + $shipping;
-
-// ==================== eSewa SIGNATURE ====================
-$secretKey = "8gBm/:&EnhH.1/q"; // replace with your eSewa test secret key
 $product_code = "EPAYTEST";
-$transaction_uuid = uniqid("order_");
-
-// build string to sign - Note: no formatting for signature generation
-$string_to_sign = "total_amount={$totalAmount},transaction_uuid={$transaction_uuid},product_code={$product_code}";
-$signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true));
 ?>
 
 <!DOCTYPE html>
@@ -456,10 +439,10 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
 
     <!-- eSewa Form - Hidden by default -->
     <form id="esewa-form" action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST" style="display: none;">
-        <input type="hidden" name="amount" value="<?php echo $subtotal; ?>">
+        <input type="hidden" name="amount" value="0">
         <input type="hidden" name="tax_amount" value="0">
-        <input type="hidden" name="total_amount" value="<?php echo $totalAmount; ?>">
-        <input type="hidden" name="transaction_uuid" value="<?php echo $transaction_uuid; ?>">
+        <input type="hidden" name="total_amount" value="0">
+        <input type="hidden" name="transaction_uuid" value="">
         <input type="hidden" name="product_code" value="<?php echo $product_code; ?>">
         <input type="hidden" name="product_service_charge" value="0">
         <input type="hidden" name="product_delivery_charge" value="<?php echo $shipping; ?>">
@@ -467,13 +450,34 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
         <input type="hidden" name="failure_url" value="http://localhost/E-commerce/includes/payment_failed.php"> 
         
         <input type="hidden" name="signed_field_names" value="total_amount,transaction_uuid,product_code">
-        <input type="hidden" name="signature" value="<?php echo $signature; ?>">
+        <input type="hidden" name="signature" value="">
     </form>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get cart items from sessionStorage or initialize empty array
             let cartItems = JSON.parse(sessionStorage.getItem('cartItems')) || [];
+
+            function parsePrice(value) {
+                if (typeof value === 'number') {
+                    return value;
+                }
+                if (typeof value === 'string') {
+                    let normalized = value.replace(/,/g, '');
+                    normalized = normalized.replace(/npr\.?|rs\.?/gi, '');
+                    normalized = normalized.replace(/\s+/g, '');
+                    normalized = normalized.replace(/[^0-9.]/g, '');
+
+                    const firstDot = normalized.indexOf('.');
+                    if (firstDot !== -1) {
+                        normalized = normalized.slice(0, firstDot + 1) + normalized.slice(firstDot + 1).replace(/\./g, '');
+                    }
+
+                    const parsed = parseFloat(normalized || '0');
+                    return Number.isFinite(parsed) ? parsed : 0;
+                }
+                return 0;
+            }
             
             // Display cart items in checkout
             function displayCartItems() {
@@ -490,8 +494,9 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
                 let subtotal = 0;
                 
                 cartItems.forEach((item, index) => {
-                    const price = parseFloat(item.price.replace('Rs. ', ''));
-                    const itemTotal = price * item.quantity;
+                    const price = parsePrice(item.price);
+                    const quantity = parseInt(item.quantity, 10) || 0;
+                    const itemTotal = price * quantity;
                     subtotal += itemTotal;
                     
                     const cartItemElement = document.createElement('div');
@@ -501,7 +506,7 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
                         <div class="cart-item-details">
                             <div class="cart-item-name">${item.name}</div>
                             <div class="cart-item-price">${item.price}</div>
-                            <div class="cart-item-quantity">Quantity: ${item.quantity}</div>
+                            <div class="cart-item-quantity">Quantity: ${quantity}</div>
                         </div>
                         <div class="cart-item-total">Rs. ${itemTotal.toFixed(2)}</div>
                     `;
@@ -514,6 +519,12 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
                 
                 document.getElementById('subtotal').textContent = `Rs. ${subtotal.toFixed(2)}`;
                 document.getElementById('total').textContent = `Rs. ${total.toFixed(2)}`;
+
+                // Keep the plain amount fields in sync with checkout values.
+                // Signature and transaction UUID are set by prepare_esewa_payment.php.
+                const esewaForm = document.getElementById('esewa-form');
+                esewaForm.querySelector('input[name="amount"]').value = subtotal.toFixed(2);
+                esewaForm.querySelector('input[name="total_amount"]').value = total.toFixed(2);
             }
             
             // Initialize the page with cart items
@@ -553,7 +564,11 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
                 // Prepare order data
                 const orderData = {
                     customerInfo: formData,
-                    items: cartItems,
+                    items: cartItems.map(item => ({
+                        ...item,
+                        quantity: parseInt(item.quantity, 10) || 0,
+                        price: parsePrice(item.price)
+                    })),
                     subtotal: parseFloat(document.getElementById('subtotal').textContent.replace('Rs. ', '')),
                     shipping: 100,
                     total: parseFloat(document.getElementById('total').textContent.replace('Rs. ', '')),
@@ -614,40 +629,59 @@ $signature = base64_encode(hash_hmac('sha256', $string_to_sign, $secretKey, true
             }
             
             // Process eSewa payment
-         function processEsewaPayment(orderData) {
-    const placeOrderBtn = document.getElementById('place-order-btn');
-    placeOrderBtn.disabled = true;
-    placeOrderBtn.textContent = 'Processing...';
+            function processEsewaPayment(orderData) {
+                const placeOrderBtn = document.getElementById('place-order-btn');
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.textContent = 'Processing...';
 
-    // ADD THE TRANSACTION UUID FROM PHP
-    orderData.transaction_uuid = "<?php echo $transaction_uuid; ?>";
+                fetch('process_order.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData),
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        throw new Error(data.error || 'Failed to create order');
+                    }
 
-    fetch('process_order.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData),
-        credentials: 'include'
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Clear cart
-            sessionStorage.removeItem('cartItems');
-            cartItems = [];
+                    return fetch('prepare_esewa_payment.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            orderId: data.orderId,
+                            transaction_uuid: data.transactionId
+                        }),
+                        credentials: 'include'
+                    });
+                })
+                .then(response => response.json())
+                .then(esewaData => {
+                    if (!esewaData.success) {
+                        throw new Error(esewaData.error || 'Failed to prepare eSewa payment');
+                    }
 
-            // Submit eSewa form
-            document.getElementById('esewa-form').submit();
-        } else {
-            throw new Error(data.error || 'Failed to create order');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while processing your order. Please try again.');
-        placeOrderBtn.disabled = false;
-        placeOrderBtn.textContent = 'Place Order';
-    });
-}
+                    const esewaForm = document.getElementById('esewa-form');
+                    esewaForm.querySelector('input[name="amount"]').value = esewaData.amount;
+                    esewaForm.querySelector('input[name="tax_amount"]').value = esewaData.tax_amount || '0';
+                    esewaForm.querySelector('input[name="total_amount"]').value = esewaData.total_amount;
+                    esewaForm.querySelector('input[name="product_service_charge"]').value = esewaData.product_service_charge || '0';
+                    esewaForm.querySelector('input[name="product_delivery_charge"]').value = esewaData.product_delivery_charge || '0';
+                    esewaForm.querySelector('input[name="transaction_uuid"]').value = esewaData.transaction_uuid;
+                    esewaForm.querySelector('input[name="signature"]').value = esewaData.signature;
+
+                    sessionStorage.removeItem('cartItems');
+                    cartItems = [];
+                    esewaForm.submit();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing your order. Please try again.');
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.textContent = 'Place Order';
+                });
+            }
             
             // Style payment method selection
             const paymentMethods = document.querySelectorAll('.payment-method');

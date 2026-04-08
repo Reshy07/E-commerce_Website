@@ -139,7 +139,7 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
                 <div class="category-column">
                     <div class="types">
                         <h3 class="row-title">Outdoor Plants</h3>
-                        <a href="../pages/categories/outdoor.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
+                        <a href="./category.php?category=outdoor" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
                         
                     </div>
                     <img src="../icon/outdoor.png" alt="Outdoor plants">
@@ -147,7 +147,7 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
                 <div class="category-column">
                     <div class="types">
                         <h3 class="row-title">Hanging Plants</h3>
-                        <a href="../pages/categories/hanging.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
+                        <a href="./category.php?category=hanging" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
                         
                     </div>
                     <img src="../icon/hang.png" alt="Hanging plants">
@@ -155,7 +155,7 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
             <div class="category-column">
                 <div class="types">
                     <h3 class="row-title">Fruit-Bearing Plants</h3>
-                    <a href="../pages/categories/Fruits.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
+                    <a href="./category.php?category=fruit" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
               
                 </div>
                 <img src="../icon/fruits.png" alt="Fruit-bearing plants">
@@ -164,7 +164,7 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
             <div class="category-column">
                 <div class="types">
                     <h3 class="row-title">Most Bought Plants</h3>
-                    <a href="../pages/categories/popular.htm" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>            
+                    <a href="./category.php?category=popular" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>            
                 </div>
                 <img src="../icon/favored.png" alt="Popular plants">
             </div>
@@ -172,7 +172,7 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
             <div class="category-column">
                 <div class="types">
                     <h3 class="row-title">New Arrivals</h3>
-                    <a href="../pages/categories/new.html" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
+                    <a href="./category.php?category=new" class="Shop">Shop now <img src="../icon/right-arrow.png" class="arrow" alt="Arrow"></a>
                     
                 </div>
                 <img src="../icon/new-product.png" alt="New arrivals">
@@ -202,8 +202,8 @@ $user_name = $logged_in ? $_SESSION['user_name'] : ''; // Changed to match login
             <h3 >Quick Links</h3>
             <ul >
                 <li><a href="../e-commerce.php" >Home</a></li>
-                <li><a href="../pages/categories/indoor.html" >Shop</a></li>
-                <li><a href="../pages/categories/indoor.html" >Plant Care</a></li>
+                <li><a href="./category.php?category=indoor" >Shop</a></li>
+                <li><a href="./category.php?category=popular" >Plant Care</a></li>
                 <li><a href="#about">About Us</a></li>
                 <li><a href="#updates" >Contact</a></li>
             </ul>

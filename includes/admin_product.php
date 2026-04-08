@@ -154,6 +154,11 @@ $admin_name = $_SESSION['admin_name'];
             border-radius: 5px;
             cursor: pointer;
         }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #EEF0E5;
+        }
 
         .product-management {
             background-color: white;
@@ -261,7 +266,7 @@ $admin_name = $_SESSION['admin_name'];
                 Hi, <?php echo htmlspecialchars($admin_name); ?>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="#dashboard">
+                <li><a href="admin_dashboard.php#dashboard">
                     <span><img src="../icon/dashboard.png"></span> 
                     Dashboard
                 </a></li>
@@ -269,7 +274,7 @@ $admin_name = $_SESSION['admin_name'];
                     <span><img src="../icon/product.png"></span> 
                     Products
                 </a></li>
-                <li><a href="#orders">
+                <li><a href="admin_orders.php">
                     <span><img src="../icon/order.png"></span> 
                     Orders
                 </a></li>
@@ -277,8 +282,8 @@ $admin_name = $_SESSION['admin_name'];
                     <span><img src="../icon/customer.png"></span> 
                     Customers
                 </a></li>
-                <li><a href="#settings">
-                    <span><img src="../icon/settingssssss.png"></span> 
+                <li><a href="admin_settings.php">
+                    <span><img src="../icon/settings.png"></span> 
                     Settings
                 </a></li>
                 <li>

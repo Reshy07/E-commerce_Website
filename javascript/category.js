@@ -11,6 +11,29 @@ document.addEventListener('DOMContentLoaded', function()
         sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
     }
 
+    function parsePrice(value) {
+        if (typeof value === 'number') {
+            return value;
+        }
+
+        if (typeof value === 'string') {
+            let normalized = value.replace(/,/g, '');
+            normalized = normalized.replace(/npr\.?|rs\.?/gi, '');
+            normalized = normalized.replace(/\s+/g, '');
+            normalized = normalized.replace(/[^0-9.]/g, '');
+
+            const firstDot = normalized.indexOf('.');
+            if (firstDot !== -1) {
+                normalized = normalized.slice(0, firstDot + 1) + normalized.slice(firstDot + 1).replace(/\./g, '');
+            }
+
+            const parsed = parseFloat(normalized || '0');
+            return Number.isFinite(parsed) ? parsed : 0;
+        }
+
+        return 0;
+    }
+
     function createCartElements() 
     {
         const cartOverlay = document.createElement('div');
@@ -114,8 +137,9 @@ document.addEventListener('DOMContentLoaded', function()
             cartContent.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
         } else {
             cartItems.forEach((item, index) => {
-                const priceNumber = parseFloat(item.price.replace('Rs. ', ''));
-                const itemTotal = priceNumber * item.quantity;
+                const priceNumber = parsePrice(item.price);
+                const quantity = parseInt(item.quantity, 10) || 0;
+                const itemTotal = priceNumber * quantity;
                 
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
@@ -128,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function()
                         <p>${item.price}</p>
                         <div class="quantity-control">
                             <button class="quantity-btn minus" data-index="${index}">-</button>
-                            <span>${item.quantity}</span>
+                            <span>${quantity}</span>
                             <button class="quantity-btn plus" data-index="${index}">+</button>
                         </div>
                     </div>
@@ -143,8 +167,9 @@ document.addEventListener('DOMContentLoaded', function()
         }
 
         const totalPrice = cartItems.reduce((total, item) => {
-            const price = parseFloat(item.price.replace('Rs. ', ''));
-            return total + (price * item.quantity);
+            const price = parsePrice(item.price);
+            const quantity = parseInt(item.quantity, 10) || 0;
+            return total + (price * quantity);
         }, 0);
         
         document.querySelector('.cart-total').innerHTML = `

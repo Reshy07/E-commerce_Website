@@ -7,6 +7,28 @@ require_once "db_connect.php";   // $conn = new mysqli(...)
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
+function parse_money_value($value): float {
+    if (is_int($value) || is_float($value)) {
+        return (float)$value;
+    }
+
+    $raw = strtolower(trim((string)$value));
+    $raw = str_replace(',', '', $raw);
+    $raw = str_replace(['npr', 'rs. ', 'rs.', 'rs '], '', $raw);
+    $clean = preg_replace('/[^0-9.]/', '', $raw);
+
+    if ($clean === '') {
+        return 0.0;
+    }
+
+    $first_dot = strpos($clean, '.');
+    if ($first_dot !== false) {
+        $clean = substr($clean, 0, $first_dot + 1) . str_replace('.', '', substr($clean, $first_dot + 1));
+    }
+
+    return (float)$clean;
+}
+
 try {
     /* --------------------------------------------------------------
        1. BASIC AUTH + INPUT
@@ -37,7 +59,7 @@ try {
     $calcSubtotal = 0.0;
     foreach ($items as $row) {
         $qty   = (int)($row['quantity'] ?? 0);
-        $price = (float)preg_replace('/[^0-9.]/', '', (string)($row['price'] ?? '0'));
+        $price = parse_money_value($row['price'] ?? 0);
         if ($qty <= 0 || $price <= 0) {
             throw new Exception("Invalid cart line: " . json_encode($row));
         }
@@ -105,7 +127,7 @@ try {
     foreach ($items as $row) {
         $pname = trim((string)($row['name'] ?? ''));
         $qty   = (int)($row['quantity'] ?? 0);
-        $price = (float)preg_replace('/[^0-9.]/', '', (string)($row['price'] ?? '0'));
+        $price = parse_money_value($row['price'] ?? 0);
         $stmt->bind_param("isid", $order_id, $pname, $qty, $price);
         $stmt->execute();
     }

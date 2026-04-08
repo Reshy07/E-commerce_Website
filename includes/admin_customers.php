@@ -168,7 +168,7 @@ $admin_name = $_SESSION['admin_name'];
                     <span><img src="../icon/product.png"></span> 
                     Products
                 </a></li>
-                <li><a href="#orders">
+                <li><a href="admin_orders.php">
                     <span><img src="../icon/order.png"></span> 
                     Orders
                 </a></li>
@@ -176,8 +176,8 @@ $admin_name = $_SESSION['admin_name'];
                     <span><img src="../icon/customer.png"></span> 
                     Customers
                 </a></li>
-                <li><a href="#settings">
-                    <span><img src="../icon/settingssssss.png"></span> 
+                <li><a href="admin_settings.php">
+                    <span><img src="../icon/settings.png"></span> 
                     Settings
                 </a></li>
                 <li>
@@ -347,5 +347,4 @@ document.querySelectorAll('.close-modal').forEach(btn => {
 });
 </script>
 </body>
-</head>
 </html>
